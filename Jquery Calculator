@@ -1,1 +1,174 @@
 
+//html
+
+
+<link href="https://fonts.googleapis.com/css2?family=Gotu&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gotu&family=Playfair+Display:ital,wght@1,800&display=swap" rel="stylesheet">
+<div class="text-center x">
+  <h1>JQuery Calculator</h1>
+</div>
+<div id="calcoutput">
+  <span id="steps">0</span>
+  <hr/>
+</div>
+  <div class="text-center" id="calculator">
+    <a class="btn btn-danger" id="deleteAll">AC</a>
+    <a class="btn btn-danger" id="backOne">CE</a>
+    <a class="btn btn-primary" id="/">/</a>
+     <a class="btn btn-primary" id="*">*</a>
+    <br/>
+    <a class="btn btn-primary" id="7">7</a>
+    <a class="btn btn-primary" id="8">8</a>
+    <a class="btn btn-primary" id="9">9</a>
+     <a class="btn btn-primary" id="-">-</a>
+    <br/>
+     <a class="btn btn-primary" id="4">4</a>
+    <a class="btn btn-primary" id="5">5</a>
+    <a class="btn btn-primary" id="6">6</a>
+     <a class="btn btn-primary" id="+">+</a>
+    
+    <br/>
+     <a class="btn btn-primary" id="1">1</a>
+    <a class="btn btn-primary" id="2">2</a>
+    <a class="btn btn-primary" id="3">3</a>
+     <a class="btn btn-primary" id=".">.</a>
+    <br/>
+    <a class="btn btn-primary bigButton" id="0">0</a>
+    <a class="btn btn-primary bigButton" id="total">=</a>
+</div>
+<br/>
+<div  class="text-center" id="y">
+  <span>Designed and Coded by-</span><br/>
+<span class="text-center" style="font-style:italic">G.S.</span>
+</div>
+</div>
+
+
+
+//CSS
+
+
+
+html,body{
+  background-image:url("https://www.xmple.com/wallpaper/blue-black-gradient-linear-1920x1080-c2-00008b-000000-a-315-f-14.svg");
+}
+h1{
+  color:black;
+  font-family:"gotu";
+}
+.x{
+  background-color:orange;
+}
+#y{
+  background-color:orange;
+  font-family:"gotu";
+  
+}
+#calcoutput{
+  background-color:white;
+   width:250px;
+  color:black;
+  height:75px;
+  border-top-left-radius:1.5em;
+  border-top-right-radius:1.5em;
+  margin-right:auto;
+  margin-left:auto;
+  margin-top:20px;
+  padding-top:15px;
+}
+#calculator{
+  background-color:orange;
+  width:250px;
+  height:auto;
+  padding-top:20px;
+  padding-bottom:30px;
+  border-bottom-left-radius:1.5em;
+  border-bottom-right-radius:1.5em;
+  margin-right:auto;
+  margin-left:auto;
+}
+#steps{
+  padding-left:50px;
+  font-size:2em;
+}
+a{
+  font-family: 'Playfair Display', serif;
+  margin:5px;
+  width:auto;
+  height:auto;
+}
+.bigButton{
+  width:93px;
+}
+
+
+
+
+//Jquery
+
+
+
+
+
+$(document).ready(function(){
+  var inputs=[""];
+  var totalString;
+  var operators1=["+", "-", "/", "*"];
+  var operators2=["."];
+  var nums=[0,1,2,3,4,5,6,7,8,9];
+  function getValue(input){
+    if(operators2.includes(inputs[inputs.length-1] ) && input===".")
+       {
+       console.log("Duplicate");
+       }
+    else if(inputs.length===1 && operators1.includes(input)===false)
+      {
+        inputs.push(input);
+      }
+    else if(operators1.includes(inputs[inputs.length-1])===false)
+      {
+        inputs.push(input);
+      }
+    else if(nums.includes(Number(input)))
+            {
+            inputs.push(input);
+            }
+  update();
+  };
+  function update(){
+    totalString=inputs.join("");
+    $("#steps").html(totalString);
+  };
+  function getTotal(){
+    totalString=inputs.join("");
+    $("#steps").html(eval(totalString));
+    var x=$("#steps").html();
+    inputs.splice(0, inputs.length);
+    inputs.push(x);
+  };
+  $("a").on("click",function(){
+    if(this.id==="deleteAll"){
+      inputs=[""];
+      update();
+    }
+    else if(this.id==="backOne")
+      {
+        inputs.pop();
+        update();
+      }
+    else if(this.id==="total")
+      {
+        getTotal();
+      }
+    else{
+      if(inputs[inputs.length-1].indexOf("+" ,"-" ,"/" ,"*")===-1)
+         {
+         getValue(this.id);
+         }
+      else
+        {
+          getValue(this.id);
+        }
+    }
+  });
+});
