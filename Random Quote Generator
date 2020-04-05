@@ -11,3 +11,73 @@
     <span class="author"></span>
   </div>
 </div>
+
+
+//CSS
+
+
+body{
+  background-image:url("https://www.xmple.com/wallpaper/black-white-hexagon-purple-glow-gradient-1920x1080-c4-000000-ffffff-483d8b-000000-l2-1-29-a-45-f-6.svg");
+    font-family:"Times New Roman";
+}
+h1{
+  color:white; 
+  font-family:"Times New Roman";
+}
+p{
+  color:white;
+  font-family:"Times New Roman";
+    font-style:Italic;
+  font-size:20px;
+}
+img{
+  padding:20px;
+}
+.quotes{
+  background-color:black;
+  width:33%;
+  margin-left:auto;
+  margin-right:auto;
+  border-color:white;
+  border-style:solid;
+  border-radius:5px;
+  margin-top:20px;
+  padding:15px;
+  height:auto;
+  color:white;
+}
+.quote{
+  font-size:30px;
+}
+.author{
+  font-size:20px;
+  font-style:italic;
+}
+
+
+
+//Jquery
+
+
+
+$(document).ready(function(){
+  var x;
+  getQuote();
+  function getQuote(){
+    var url="https://api.quotable.io/random";
+      $.getJSON(url, function(data)
+               {
+        $(".quote").html('"'+data.content+'"');
+        $(".author").html("- "+data.author);
+         x=$(".quote").html()+" -"+$(".author").html();
+      });
+  };
+   $("#tweet").on("click", function()
+                {
+    window.open("https://twitter.com/intent/tweet?text="+x);
+  });
+    $("#newq").on("click", function(){
+      getQuote();
+    });
+ 
+});
