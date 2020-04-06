@@ -1,0 +1,129 @@
+//html
+
+
+<link href="https://fonts.googleapis.com/css2?family=Gotu&display=swap" rel="stylesheet">
+<div class="text-center">
+  <h1>Weather App</h1>
+  <h7 style="font-style:italic">Get your local weather report here!</h7>
+  <h2 id="wel"></h2>
+<div class="container-fluid">
+  <div class="row r">
+  <div id="a" class=" col-xl-3 col-xs-3 btn btn-primary">Location</div>
+  <div id="wt" class="col-xl-3 col-xs-3  btn btn-primary">Weather Type</div>
+  <div id="t" class="col-xl-3 col-xs-3  btn btn-primary">Temperature</div>
+  <div id="ws" class="col-xl-3 col-xs-3  btn btn-primary">Wind Speed</div>
+  </div>
+    <div class="jumbotron row">
+  <div id="city" class="col-xl-3 btn btn-primary col-xs-3"></div>
+  <div id="weather-type" class="col-xl-3 btn btn-primary col-xs-3"></div>
+  <div id="ftemp" class="col-xl-3 btn btn-primary col-xs-3"></div>
+  <div id="windspeed" class="col-xl-3 btn btn-primary col-xs-3"></div>
+      
+                                            </div>
+                                            </div>
+  <h5>Designed and coded by-</h5>  
+  <h6>G.S.</h6>
+</div>
+
+
+
+
+//css
+
+body{
+  background-image:url("https://cdn.pixabay.com/photo/2016/06/07/16/12/sky-1441936_1280.jpg");
+    background-size: cover;
+  background-position:center bottom;
+  background-repeat:no-repeat;
+  font-family: 'Gotu', sans-serif;
+}
+#wel{
+  margin-top:15px;
+}
+.r{
+  margin-top:45px;
+  font-size:25px;
+}
+.jumbotron{
+  width:auto;
+  height:auto;
+  margin-top:80px;
+  margin-left:auto;
+  margin-right:auto;
+  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%)
+}
+
+
+
+//jquery
+
+$(document).ready(function(){
+  var long;
+  var lat;
+  var api;
+  var ftemp;
+  var ktemp;
+  if(navigator.geolocation)
+    {
+      navigator.geolocation.getCurrentPosition(function(position){
+         long=position.coords.longitude; 
+         lat=position.coords.latitude;
+        api = "https://fcc-weather-api.glitch.me/api/current?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
+        $("#data").html("latitude: " + lat+ "<br>longitude: " + long);
+        var tempSwap=true;
+      
+  $.getJSON(api, function(data){
+    var weatherType=data.weather[0].description;
+    var ctemp=data.main.temp;
+    var windSpeed=data.wind.speed;
+    var city=data.name;
+     ktemp=(ctemp+273).toFixed(1);
+    ftemp=((ktemp)*(9/5)-459.67).toFixed(1);
+    if(ctemp>30)
+      {
+        $("#wel").html("Oh!! Hot temperature, So be inside and Fight Corona!!");
+      }
+    else if(ctemp<30 && ctemp>18)
+      {
+         $("#wel").html("Moderate temperature!! But be inside and Fight Corona!!");
+      }
+    else
+      {
+         $("#wel").html("Cool temperature!!, But be inside and Fight Corona!!");
+      }
+    $("#city").html(city);
+    $("#weather-type").html(weatherType);
+    $("#ftemp").html(ftemp+" &#8457;"+" (click me for"+" &#8451;)");
+    $("#ftemp").on("click", function(){
+      if(tempSwap===false)
+        {
+           $("#ftemp").html(ftemp+" &#8457" +" (click me for"+" &#8451;)");
+          tempSwap=true;
+        }
+      else
+        {
+          $("#ftemp").html(ctemp+" &#8451;"+" (click me for"+" &#8457;)");
+          tempSwap=false;
+        }
+    })
+    $("#windspeed").html(windSpeed+" mps");
+    $("#a").on("click",function(){
+      $("#city").css("background", "black");
+    })
+    $("#wt").on("click",function(){
+      $("#weather-type").css("background", "black");
+    })
+    $("#t").on("click",function(){
+      $("#ftemp").css("background", "black");
+    })
+    $("#ws").on("click",function(){
+      $("#windspeed").css("background", "black");
+    })
+  });
+   });
+    }
+});
+
+
+
+
