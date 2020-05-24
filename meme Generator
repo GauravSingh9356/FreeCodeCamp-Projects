@@ -1,0 +1,863 @@
+#################html###############################
+
+
+
+
+<aside>
+  <h1>
+    GSMeme
+  </h1>
+  <div class="drop">
+    Drop an image file here
+    <span>Accepted: JP(E)G, PNG, GIF, BMP, PSD</span>
+    <input type="file" accept="image/*;capture=camera" onchange="jsMeme.file.import(this)" />
+  </div>
+  <form class="webcam" style="display: none">
+    <video></video>
+    <button class="fr" onclick="return jsMeme.webcam.reset(), !1">Retry</button>
+    <button class="blue" onclick="return jsMeme.webcam.take(), !1">Take</button>
+  </form>
+  <form>
+    <button class="fr" onclick="return jsMeme.webcam.start(), !1"><i class="fa fa-camera"></i></button>
+    <button onclick="return jsMeme.file.rotate(-90), !1"><i class="fa fa-rotate-left"></i></button>
+    <button onclick="return jsMeme.file.rotate(90), !1"><i class="fa fa-rotate-right"></i></button>
+  </form>
+  <form>
+    <input type="text" placeholder="Type your first line..." name="line-1" />
+    <input type="text" placeholder="Type your second line..." name="line-2" />
+    <label><input type="text" size="14" placeholder="Image Size..." value="550" name="maximum-width" class="slider" min="200" max="1024" /> <em>Width: <span name="img-width">550px</span></em></label>
+  </form>
+  <form>
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td width="33%" align="left" valign="top">
+          <label class="layout-type default">
+            <em></em>
+            <input type="radio" name="layout-type" value="default" onchange="jsMeme.captions.layout(this.value)" checked />
+            <b></b>
+          </label>
+        </td>
+        <td width="33%" align="center" valign="top">
+          <label class="layout-type classic">
+            <em></em>
+            <input type="radio" name="layout-type" value="classic" onchange="jsMeme.captions.layout(this.value)" />
+            <b></b>
+          </label>
+        </td>
+        <td width="33%" align="right" valign="top">
+          <label class="layout-type classic-split">
+            <em></em>
+            <input type="radio" name="layout-type" value="classic-split" onchange="jsMeme.captions.layout(this.value)" />
+            <b></b>
+          </label>
+        </td>
+      </tr>
+    </table>
+  </form>
+  <form onsubmit="return jsMeme.file.export(), !1">
+    <button class="fr" onclick="return jsMeme.reset(), !1">Reset</button>
+    <button class="blue">Download Image</button>
+  </form>
+  <form>
+    <ul class="changelog">
+      <li><strong>Changelog</strong></li>
+      <li v="1.0.9">
+        <span>Fixed missing resource files</span>
+      </li>
+      <li v="1.0.8">
+        <span>Removed redundant functions</span>
+        <span>Removed &lt;!DOCTYPE&gt;</span>
+      </li>
+      <li v="1.0.7">
+        <span>Fixed icons (FontAwesome)</span>
+        <span>Changed width input to slider</span>
+        <span>Fixed download filename bug</span>
+      </li>
+      <li v="1.0.6">
+        <span>Added text layouts</span>
+        <span>Added webcam support</span>
+        <span>Added rotation</span>
+      </li>
+      <li v="1.0.5">
+        <span>Variable shadow strength</span>
+        <span>Facility to change image width (height is automatic)</span>
+      </li>
+      <li v="1.0.4">Removed temporary images from viewport</li>
+      <li v="1.0.3">
+        <span>Tweaked text typing timeout.</span>
+        <span>Fixed bugs, made 'lines' more extensible, added reset.</span>
+      </li>
+      <li v="1.0.2">Added shadows (blurring) to text.</li>
+      <li v="1.0.1">Initial build took ~2hrs.</li>
+    </ul>
+  </form>
+</aside>
+<main>
+  <div class="canvas-container">
+    <canvas></canvas>
+  </div>
+  <div class="not-ready">
+    <button class="dark">
+      Choose an image file to get started
+      <input type="file" accept="image/*;capture=camera" onchange="jsMeme.file.import(this)" />
+    </button>
+  </div>
+</main>
+
+
+
+
+##############css############################################
+
+
+
+
+html, body { width: 100%; height: 100% }
+
+body > img { display: none }
+.fr { float: right }
+
+a
+{
+  color: inherit;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+body
+{
+  background: #222;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-weight: 100;
+  font-size: 13px;
+  letter-spacing: 1px;
+  line-height: 140%;
+  color: #FFF;
+}
+
+body > aside
+{
+  display: block;
+  float: right;
+  width: 240px;
+  height: 100%;
+  overflow: auto;
+  background: #444;
+}
+
+body > aside > h1
+{
+  padding: 20px;
+  background: #363636;
+  font-size: 24px;
+  color: #EEE;
+}
+
+body > aside > h1 > b, body > aside > h1 > span { color: #666 }
+
+body > aside > h1 > span
+{
+  float: right;
+  margin-right: -5px;
+  font-size: 16px;
+  font-weight: 300;
+  color: #555;
+}
+
+body > aside > .drop
+{
+  position: relative;
+  margin: 20px 10px;
+  padding: 20px 0;
+  overflow: hidden;
+  text-align: center;
+  border: 2px dashed #555;
+  border-radius: 10px;
+  font-size: 16px;
+  color: #888;
+}
+
+body > aside > .drop > span
+{
+  display: block;
+  font-size: 9px;
+  font-weight: 300;
+  letter-spacing: 0;
+}
+
+body > aside > .drop > input
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: .000001;
+  cursor: default;
+}
+
+body > aside > form
+{
+  margin: 20px 0;
+  padding: 0 10px;
+}
+
+body > aside ul.changelog
+{
+  padding: 5px;
+  opacity: .33;
+}
+
+body > aside ul.changelog > li[v]:before
+{
+  content: attr(v);
+  display: block;
+  margin-bottom: -5px;
+  font-size: 9px;
+  color: #CCC;
+}
+
+body > aside ul.changelog > li[v].prog:before { content: attr(v) " (in progress)" }
+
+body > aside ul.changelog > li
+{
+  display: block;
+  margin: 5px;
+  font-size: 12px;
+}
+
+body > aside ul.changelog li > span
+{
+  position: relative;
+  display: block;
+  padding-left: 5px;
+}
+
+body > aside ul.changelog li > span:before
+{
+  content: "•";
+  position: absolute;
+  top: 0;
+  right: 100%;
+  margin: 0 -3px 0 0;
+  font-size: 9px;
+  color: #666;
+}
+
+body > aside ul.changelog > li > strong
+{
+  font-weight: 400;
+  font-size: 14px;
+}
+
+body > aside > .webcam > video
+{
+  display: block;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+body > main
+{
+  position: relative;
+  display: block;
+  margin: 0 240px 0 0;
+  height: 100%;
+  overflow: auto;
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, .25);
+}
+
+body > main > .canvas-container
+{
+  display: none;
+  position: relative;
+  margin: 20px;
+}
+
+body > main.ready > .canvas-container { display: block }
+
+body > main > .not-ready
+{
+  padding: 50px 0;
+  text-align: center;
+}
+
+body > main.ready > .not-ready { display: none }
+
+body > main > .canvas-container > canvas { display: block }
+
+input[type="text"], button
+{
+  position: relative;
+  display: inline-block;
+  margin: 3px 0;
+  padding: 8px 10px;
+  overflow: hidden;
+  border: none;
+  background: #FFF;
+  border-radius: 2px;
+}
+
+input[type="text"]:not([size]) { width: 91% }
+
+button
+{
+  width: auto;
+  background: #CCC;
+  color: #333;
+  cursor: pointer;
+}
+
+button > input[type="file"]
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: .0001;
+  cursor: pointer;
+}
+
+button.blue
+{
+  background: #3273A3;
+  color: #FFF;
+}
+
+button.dark
+{
+  background: #4E4E4E;
+  color: #FFF;
+}
+
+label > input + em
+{
+  display: inline-block;
+  padding-left: 10px;
+  vertical-align: middle;
+  font-weight: 400;
+  color: #777;
+}
+
+label.layout-type
+{
+  position: relative;
+  display: inline-block;
+  width: 90%;
+  height: 50px;
+  border: 1px solid #222;
+  background: #333;
+  border-radius: 3px;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 0;
+}
+
+label.layout-type > input { display: none }
+
+label.layout-type > em
+{
+  display: inline-block;
+  width: 75%;
+  margin: 5px;
+}
+
+label.layout-type > em, label.layout-type > em:before, label.layout-type > em:after
+{
+  content: "";
+  height: 8px;
+  background: #222;
+}
+
+label.layout-type > em:before, label.layout-type > em:after { position: absolute }
+
+label.layout-type > em:before
+{
+  top: 10px;
+  left: 5px;
+  width: 45%;
+}
+
+label.layout-type > em:after
+{
+  bottom: 5px;
+  left: 5px;
+  height: 5px;
+  width: 55%;
+}
+
+label.layout-type.classic { text-align: center }
+
+label.layout-type.classic > em
+{
+  position: absolute;
+  bottom: 11px;
+  left: 50%;
+  margin-left: -37.5%;
+}
+
+label.layout-type.classic > em:before { display: none }
+
+label.layout-type.classic > em:after, label.layout-type.classic-split > em:after
+{
+  left: 50%;
+  margin-left: -27.5%;
+}
+
+label.layout-type.classic > em:after { top: 11px }
+
+label.layout-type.classic-split { text-align: center }
+
+label.layout-type.classic-split > em:before
+{
+  left: 50%;
+  margin-left: -22.5%;
+}
+
+label.layout-type > input:checked + b
+{
+  position: absolute;
+  display: block;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(50, 115, 163, .2);
+  border: 1px solid #3273A3;
+  border-radius: 2px;
+}
+
+.ui-slider
+{
+  display: inline-block;
+  height: 29px;
+  margin: 5px 10px 5px 0;
+  vertical-align: middle;
+  position: relative;
+  background: transparent;
+  border: none;
+}
+
+.ui-slider:before
+{
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 4px;
+  margin: -2px 0 0;
+  background: #777;
+  border-radius: 2px;
+}
+
+.ui-slider + input { display: none }
+
+.ui-slider > .ui-slider-handle
+{
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -8px 0 0 -8px;
+  background: #EEE;
+  outline: none;
+  border: 1px solid #CCC;
+  border-radius: 10px;
+  cursor: e-resize;
+}
+
+
+
+
+###########################Js#########################################
+
+
+if(!window.File || !window.FileReader) alert
+(
+  'Oops!\n' +
+  'Your browser appears to be ancient.\n' +
+  'You\'ll need to upgrade it to use jsMeme.'
+);
+
+$.fn.typingEnd = function(callback){ var tt, dt = 500, cb = callback, ob = $(this); ob.bind('keyup change', function(){ clearTimeout(tt); tt = setTimeout(function(){ cb.call(ob.get(0)) }, dt) }).keydown(function(){ clearTimeout(tt) }) };
+
+var jsMeme =
+{
+  canvas: null,
+  cache: null,
+  
+  init: function()
+  {
+    jsMeme.canvas = $('body > main > .canvas-container > canvas').get(0);
+    jsMeme.cache = document.createElement('canvas');
+    
+    $('.slider[min][max][value]').each(function()
+    {
+      var input = $(this),
+          min = parseInt(input.attr('min')),
+          max = parseInt(input.attr('max')),
+          def = parseInt(input.val());
+      
+      $('<span></span>').insertBefore(input)
+        .css('width', input.width())
+        .slider(
+        {
+          min: min,
+          max: max,
+          value: def,
+          slide: function(e, ui)
+          {
+            input.next('em').find('span[name="img-width"]').html(ui.value + 'px');
+          },
+          stop: function(e, ui)
+          {
+            input.val(ui.value).trigger('change');
+          }
+        });
+    });
+    
+    $('input[name^="line-"]').each(function()
+    {
+      $(this).typingEnd(function()
+      {
+        jsMeme.captions.list[$(this).attr('name')].text = this.value;
+        jsMeme.captions.redraw();
+      });
+    });
+    
+    $('input[name="maximum-width"]').typingEnd(function()
+    {
+      var mw = parseFloat(this.value);
+          if(mw < 200 || mw > 4096) return false;
+      
+      jsMeme.file.maxWidth = mw;
+      
+      var oWidth = jsMeme.canvas.width,
+          oHeight = jsMeme.canvas.height,
+          nWidth = jsMeme.file.maxWidth,
+          nHeight = Math.round(nWidth / oWidth * oHeight);
+      
+      jsMeme.canvas.width = nWidth;
+      jsMeme.canvas.height = nHeight;
+      jsMeme.canvas.getContext('2d').drawImage(jsMeme.cache, 0, 0, oWidth, oHeight, 0, 0, nWidth, nHeight);
+      
+      jsMeme.cache.width = nWidth;
+      jsMeme.cache.height = nHeight;
+      jsMeme.cache.getContext('2d').drawImage(jsMeme.canvas, 0, 0);
+    });
+    
+    $('body > aside > h1').append(' <b>' + $('ul.changelog li[v]').first().attr('v') + '</b>');
+  },
+  
+  reset: function()
+  {
+    window.location = window.location.href;
+  },
+  
+  captions:
+  {
+    list:
+    {
+      'line-1':
+      {
+        x: 20, y: 20,
+        alignment: 'left',
+        font: "500 30px \"Helvetica Neue\", Arial, sans-serif",
+        shadow: 1,
+        text: ""
+      },
+      'line-2':
+      {
+        x: 20, y: -20,
+        alignment: 'left',
+        font: "300 18px \"Helvetica Neue\", Arial, sans-serif",
+        shadow: 2,
+        text: ""
+      }
+    },
+    
+    layout: function(layout)
+    {
+      switch(layout)
+      {
+        case 'classic-split':
+          jsMeme.captions.list['line-1'].y = 20;
+          jsMeme.captions.list['line-1'].alignment = 'center';
+          jsMeme.captions.list['line-2'].alignment = 'center';
+          break;
+          
+        case 'classic':
+          jsMeme.captions.list['line-1'].y = -50;
+          jsMeme.captions.list['line-1'].alignment = 'center';
+          jsMeme.captions.list['line-2'].alignment = 'center';
+          break;
+        
+        default:
+          jsMeme.captions.list['line-1'].y = 20;
+          jsMeme.captions.list['line-1'].alignment = 'left';
+          jsMeme.captions.list['line-2'].alignment = 'left';
+          break;
+      }
+      jsMeme.captions.redraw();
+    },
+    
+    redraw: function()
+    {
+      jsMeme.canvas.getContext('2d').drawImage(jsMeme.cache, 0, 0);
+      
+      for(i in jsMeme.captions.list)
+        jsMeme.text
+        (
+          jsMeme.captions.list[i].text,
+          jsMeme.captions.list[i].x,
+          jsMeme.captions.list[i].y,
+          jsMeme.captions.list[i].alignment,
+          jsMeme.captions.list[i].font,
+          jsMeme.captions.list[i].shadow
+        );
+    }
+  },
+  
+  text: function(val, x, y, alignment, font, shadowstrength)
+  {
+    var ctx = jsMeme.canvas.getContext('2d');
+      ctx.font = font;
+      ctx.textAlign = "start";
+      ctx.textBaseline = "top";
+
+      if(x < 0) x = jsMeme.canvas.width + x;
+      if(y < 0)
+      {
+        y = jsMeme.canvas.height + y;
+        ctx.textBaseline = "bottom";
+      }
+    
+    if(alignment == 'center')
+      x = Math.round((jsMeme.canvas.width / 2) - (ctx.measureText(val).width / 2));
+    else if(alignment == 'right')
+      x -= ctx.measureText(val).width;
+
+      ctx.shadowColor = "#000";
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 1;
+      ctx.shadowBlur = 5;
+    
+    for(i = 0; i < shadowstrength; i ++)
+    {
+      ctx.fillStyle = "#000";
+      ctx.fillText(val, x, y);
+    }
+    
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillText(val, x, y);
+  },
+  
+  file:
+  {
+    current: {},
+    
+    maxWidth: 550,
+    
+    rotate: function(deg)
+    {
+      if(deg !== 90 && deg !== -90) return;
+      
+      var tmp = document.createElement('canvas'),
+          ctx = tmp.getContext('2d'),
+          width = jsMeme.canvas.width,
+          height = jsMeme.canvas.height;
+      
+      tmp.width = height;
+      tmp.height = width;
+      
+      ctx.rotate(deg * Math.PI / 180);
+      
+      switch(deg)
+      {
+        case 90: ctx.drawImage(jsMeme.cache, 0, -height, width, height); break;
+        case -90: ctx.drawImage(jsMeme.cache, -width, 0, width, height); break;
+      }
+      
+      jsMeme.cache.width = jsMeme.canvas.width = tmp.width;
+      jsMeme.cache.height = jsMeme.canvas.height = tmp.height;
+      jsMeme.canvas.getContext('2d').drawImage(tmp, 0, 0);
+      jsMeme.cache.getContext('2d').drawImage(jsMeme.canvas, 0, 0);
+      
+      jsMeme.captions.redraw();
+    },
+    
+    render: function(source)
+    {
+      $('body > main:not(.ready)').addClass('ready');
+      
+      var lo = ['canvas', 'cache'],
+          width = source.width,
+          height = source.height,
+          nHeight = Math.round(jsMeme.file.maxWidth / width * height);
+
+      for(op in lo)
+      {
+        jsMeme[lo[op]].width = jsMeme.file.maxWidth;
+        jsMeme[lo[op]].height = nHeight;
+
+        jsMeme[lo[op]].getContext('2d').drawImage(source, 0, 0, width, height, 0, 0, jsMeme.file.maxWidth, nHeight);
+      }
+    },
+    
+    import: function(input)
+    {
+      $('body > main').addClass('ready');
+
+      for(i in input.files)
+        if(i != 'item' && input.files[i] && input.files[i].name)
+          {
+            var file = input.files[i];
+                jsMeme.file.current = file;
+                
+            if(file.name.match(/\.psd$/i))
+            {
+              PSD.fromFile(file, function(psd)
+              {
+                var psdimg = document.createElement('img');
+                  psdimg.src = psd.toImage();
+                  psdimg.onload = function()
+                  {
+                    jsMeme.file.render(this);
+                    $(this).remove();
+                  };
+                
+                $(psdimg).prependTo('body');
+              });
+            }
+            else
+            {
+              var reader = new FileReader();
+                reader.onload = function(e)
+                {
+                  var imgimg = document.createElement('img');
+                    imgimg.src = e.target.result;
+                    imgimg.onload = function()
+                    {
+                      jsMeme.file.render(this);
+                      $(this).remove();
+                    };
+
+                  $(imgimg).prependTo('body');
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            return !1;
+          }
+    },
+    
+    export: function()
+    {
+      jsMeme.canvas.toBlob(function(blob)
+      {
+        var filename = jsMeme.file.current.name
+          .replace(/\.(.*?)$/, '-modified.png')
+          .replace(/\{date\}/gi, new Date().toUTCString().toLowerCase().replace(/[^a-zA-Z0-9]/g, '-'));
+        
+        if(filename.indexOf('.png') < 0)
+          filename += '.png';
+        
+        saveAs(blob, filename);
+      }, 'image/png');
+    }
+  },
+  
+  webcam:
+  {
+    start: function()
+    {
+      if($('body > aside > .webcam').is(':visible'))
+        return jsMeme.webcam.stop();
+      
+      $('body > aside > .drop').hide();
+      $('body > aside > .webcam').show();
+      
+      var video = $('body > aside > .webcam > video')[0],
+          streaming = !1, width = 220, height = 0;
+      
+      navigator.getMedia = (
+        navigator.getUserMedia ||
+        navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia ||
+        navigator.msGetUserMedia);
+
+      navigator.getMedia
+      (
+        { video: !0, audio: !1 },
+        function(stream)
+        {
+          if(navigator.mozGetUserMedia)
+            video.mozSrcObject = stream;
+          else
+          {
+            var vu = window.URL || window.webkitURL;
+            video.src = vu.createObjectURL(stream);
+          }
+          video.play();
+        },
+        function(error)
+        {
+          console.log("Oops! Something went wrong.\n" + error);
+        }
+      );
+
+      video.addEventListener('canplay', function(ev)
+      {
+        if(!streaming)
+        {
+          height = video.videoHeight / (video.videoWidth / width);
+          video.setAttribute('width', width);
+          video.setAttribute('height', height);
+          streaming = !0;
+        }
+      }, !1);
+    },
+    
+    stop: function()
+    {
+      $('body > aside > .drop').show();
+      $('body > aside > .webcam').hide();
+      $('body > aside > .webcam > video')[0].pause();
+    },
+    
+    reset: function()
+    {
+      $('body > aside > .webcam > video')[0].play();
+    },
+    
+    take: function()
+    {
+      var video = $('body > aside > .webcam > video')[0],
+          oWidth = video.width,
+          oHeight = video.height,
+          width = video.videoWidth,
+          height = video.videoHeight;
+      
+      video.width = width;
+      video.height = height;
+      video.pause();
+      
+      var tmp = document.createElement('canvas');
+          tmp.width = width;
+          tmp.height = height;
+          tmp.getContext('2d').drawImage(video, 0, 0);
+      
+      jsMeme.file.current = { name: "webcam-{date}" };
+      jsMeme.file.render(tmp);
+      
+      video.width = oWidth;
+      video.height = oHeight;
+    }
+  }
+};
+
+$(jsMeme.init);
